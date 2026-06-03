@@ -34,15 +34,16 @@ def registrar_gasto(transacao: Transacao):
     try:
         # Prepara o dicionário mapeando os dados recebidos para as
         # colunas exatas que você criou na tabela do Supabase
+        # Agora batendo 100% com o seu print em português!
         dados_gasto = {
             "descricao_gasto": transacao.descricao,
             "valor_gasto": transacao.valor,
-            "com_quem_gastou": transacao.com_quem_gasto,
+            "com_quem_gastou": transacao.com_quem_gasto,  # Corrigido para 'com_quem_gastou'
             "quem_gastou": transacao.quem_gastou
         }
         
         # Faz a inserção real na tabela 'gastos' do seu banco de dados
-        resposta = supabase.table("gastos").insert(dados_gasto).execute()
+        resposta = supabase.table("Gastos").insert(dados_gasto).execute()
         
         return {
             "status": "sucesso",
