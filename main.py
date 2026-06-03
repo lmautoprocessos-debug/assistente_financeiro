@@ -37,12 +37,12 @@ def registrar_gasto(transacao: Transacao):
         dados_gasto = {
             "descricao_gasto": transacao.descricao,
             "valor_gasto": transacao.valor,
-            "com_quem_gasto": transacao.com_quem_gasto,
+            "com_quem_gastou": transacao.com_quem_gasto,
             "quem_gastou": transacao.quem_gastou
         }
         
         # Faz a inserção real na tabela 'gastos' do seu banco de dados
-        resposta = supabase.table("Gastos").insert(dados_gasto).execute()
+        resposta = supabase.table("gastos").insert(dados_gasto).execute()
         
         return {
             "status": "sucesso",
