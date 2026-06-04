@@ -1,59 +1,22 @@
+from fastapi import FastAPI, Request
 import os
-from fastapi import FastAPI
-from pydantic import BaseModel
-from supabase import create_client, Client
 
 app = FastAPI()
 
-# -------------------------------------------------------------------
-# CONFIGURAÇÃO DO BANCO DE DADOS (SUPABASE)
-# Substitua com os dados reais que você copiou do painel do Supabase!
-# -------------------------------------------------------------------
-SUPABASE_URL = "https://llgxgrhhnswamjcbnrzj.supabase.co"
-SUPABASE_KEY = "sb_publishable_6w4Wutprhxg7Sj7wBbT_0w_EKHv6CZt"
+@app.get("/")
+def home():
+    return {"status": "Julius está online e ouvindo!"}
 
-# Inicializa o cliente para conectar ao Supabase
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-
-# -------------------------------------------------------------------
-# MODELO DE DADOS (O que a API vai esperar receber no Swagger/Robô)
-# -------------------------------------------------------------------
-class Transacao(BaseModel):
-    descricao: str
-    valor: float
-    quem_gastou: str
-    com_quem_gasto: str = ""  # Deixamos como opcional com um valor padrão vazio
-
-
-# -------------------------------------------------------------------
-# ROTA DA API (POST /gasto)
-# -------------------------------------------------------------------
-@app.post("/gasto")
-def registrar_gasto(transacao: Transacao):
-    try:
-        # Prepara o dicionário mapeando os dados recebidos para as
-        # colunas exatas que você criou na tabela do Supabase
-        # Agora batendo 100% com o seu print em português!
-        # Este dicionário precisa ser um ESPELHO das colunas que você tem no banco
-        dados_gasto = {
-            "descricao_gasto": transacao.descricao,
-            "valor_gasto": transacao.valor,
-            "quem_gastou": transacao.quem_gastou,
-            "com_quem_gasto": transacao.com_quem_gasto 
-        }
-        
-        # A tabela deve ser acessada com G maiúsculo para bater com o banco
-        resposta = supabase.table("gastos").insert(dados_gasto).execute()
-        
-        return {
-            "status": "sucesso",
-            "mensagem": f"Gasto de R$ {transacao.valor:.2f} com '{transacao.descricao}' salvo com sucesso no Julius!",
-            "dados_salvos": resposta.data
-        }
-        
-    except Exception as e:
-        return {
-            "status": "erro",
-            "mensagem": f"Falha ao salvar no banco de dados: {str(e)}"
-        }
+@app.post("/webhook")
+async def receber_mensagem(request: Request):
+    dados = await request.json()
+    
+    # Vamos ver o que o WhatsApp nos manda no log do Render
+    # Isso vai nos ajudar a entender a estrutura da mensagem
+    print("Nova mensagem recebida:", dados)
+    
+    # Aqui depois colocaremos a lógica:
+    # 1. Se for imagem -> chama função processar_imagem_gasto
+    # 2. Se for texto -> chama função analisar_comando_texto
+    
+    return {"status": "recebido"}
